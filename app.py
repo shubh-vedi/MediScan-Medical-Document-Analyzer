@@ -13,16 +13,43 @@ genai.configure(api_key=os.getenv("GOOGLE_API_KEY"))
 def get_gemini_response(image, input_prompt):
     model = genai.GenerativeModel('gemini-1.5-pro-latest')
     
-    prompt_template = f"""
-    As a medical expert, analyze the provided medical document image and address the following:
-    1. Provide a concise summary of key findings, diagnosis, or treatment plan.
-    2. Explain any medications mentioned, including dosages, in simple terms.
-    3. Highlight any important instructions or precautions for the patient.
-    4. If applicable, suggest when the patient should seek further medical attention.
-    5. Address any specific questions or concerns mentioned in the user's input: {input_prompt}
+    prompt_template = prompt_template = f"""
+As a medical expert, carefully analyze the provided medical document image and address the following points in detail:
 
-    Please use plain language for easy understanding by patients.
-    """
+1. Document Overview:
+   - Identify the type of medical document (e.g., discharge summary, prescription, lab report)
+   - Note the date of the document and any relevant patient information (without revealing personal details)
+
+2. Key Medical Information:
+   - Summarize the main diagnosis or medical condition discussed
+   - List any significant test results or clinical findings
+   - Outline the treatment plan or recommendations
+
+3. Medications:
+   - List all medications mentioned in the document
+   - For each medication, provide:
+     a) The purpose or condition it treats
+     b) Dosage and frequency
+     c) Any special instructions for taking the medication
+   - Explain potential side effects or warnings in simple terms
+
+4. Patient Instructions:
+   - Highlight any specific instructions for the patient (e.g., lifestyle changes, follow-up appointments)
+   - Emphasize important precautions or warning signs to watch for
+
+5. Follow-up Care:
+   - Specify when the patient should seek further medical attention
+   - Mention any scheduled follow-up appointments or recommended check-ups
+
+6. Addressing User's Concerns:
+   - Carefully consider and address the following specific questions or concerns: {input_prompt}
+
+7. Clarity Check:
+   - Review your response and ensure all medical terms are explained in plain language
+   - If any part of the document is unclear or illegible, mention this in your response
+
+Please provide your analysis in clear, patient-friendly language, avoiding medical jargon where possible. If you're unsure about any information in the image, state this clearly rather than making assumptions.
+"""
     
     response = model.generate_content([prompt_template, image])
     return response.text
